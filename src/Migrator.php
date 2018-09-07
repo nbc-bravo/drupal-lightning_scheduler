@@ -13,7 +13,6 @@ use Drupal\Core\State\StateInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
-use Drupal\lightning_core\Element;
 
 /**
  * This class is final because the migration is not an API and should not be
@@ -338,8 +337,7 @@ final class Migrator {
     }
 
     $variables = [
-      '@entity_types' =>
-        Element::oxford($this->entityTypeOptions($entity_types)),
+      '@entity_types' => implode(', ', $this->$this->entityTypeOptions($entity_types)),
       ':maintenance_mode' =>
         Url::fromRoute('system.site_maintenance_mode')->toString(),
     ];

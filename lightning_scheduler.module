@@ -7,9 +7,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Extension\Extension;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldStorageDefinitionInterface;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
-use Drupal\lightning_core\OverrideHelper;
 use Drupal\lightning_scheduler\Plugin\Field\FieldWidget\ModerationStateWidget;
 
 /**
@@ -132,7 +130,10 @@ function lightning_scheduler_entity_base_field_info(EntityTypeInterface $entity_
  * Implements hook_field_widget_info_alter().
  */
 function lightning_scheduler_field_widget_info_alter(array &$info) {
-  OverrideHelper::pluginClass($info['moderation_state_default'], ModerationStateWidget::class);
+  // Make the moderation state basefield widget use our plugin class.
+  if (!empty($info['moderation_state_default'])) {
+    $info['moderation_state_default']['class'] = ModerationStateWidget::class;
+  }
 }
 
 /**
