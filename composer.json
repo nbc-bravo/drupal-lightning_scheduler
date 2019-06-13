@@ -4,7 +4,7 @@
     "description": "Allows authors to schedule automatic transitions between workflow states.",
     "authors": [
         {
-            "name": "Adam Globus-Hoenich",
+            "name": "Phéna Proxima",
             "email": "adam.hoenich@acquia.com"
         },
         {
@@ -14,12 +14,5 @@
     ],
     "require": {
         "php": ">=5.6.0"
-    },
-    "extra": {
-        "drush": {
-            "services": {
-                "drush.services.yml": "^9"
-            }
-        }
     }
 }

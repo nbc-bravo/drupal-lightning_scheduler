@@ -2,7 +2,6 @@
 
 use Drupal\Core\Cache\CacheCollectorInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Extension\Extension;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -86,8 +85,6 @@ function lightning_scheduler_entity_base_field_info(EntityTypeInterface $entity_
   /** @var \Drupal\content_moderation\ModerationInformationInterface $moderation_info */
   $moderation_info = Drupal::service('content_moderation.moderation_information');
 
-  $migrations = Drupal::service('lightning_scheduler.migrator')->getMigrations();
-
   if ($moderation_info->canModerateEntitiesOfEntityType($entity_type)) {
     $fields['scheduled_transition_date'] = BaseFieldDefinition::create('datetime')
       ->setDisplayConfigurable('view', FALSE)
@@ -102,24 +99,7 @@ function lightning_scheduler_entity_base_field_info(EntityTypeInterface $entity_
       ->setTranslatable(TRUE)
       ->setRevisionable(TRUE)
       ->setCardinality(FieldStorageDefinitionInterface::CARDINALITY_UNLIMITED);
-
-    // If the entity type has not yet been migrated, we need to continue to
-    // define the base fields from the 1.x version.
-    if (in_array($entity_type->id(), $migrations, TRUE)) {
-      $fields['scheduled_publication'] = BaseFieldDefinition::create('datetime')
-        ->setDisplayConfigurable('view', FALSE)
-        ->setDisplayConfigurable('form', FALSE)
-        ->setTranslatable(TRUE)
-        ->setRevisionable(TRUE);
-
-      $fields['scheduled_moderation_state'] = BaseFieldDefinition::create('string')
-        ->setDisplayConfigurable('view', FALSE)
-        ->setDisplayConfigurable('form', FALSE)
-        ->setTranslatable(TRUE)
-        ->setRevisionable(TRUE);
-    }
   }
-
   return $fields;
 }
 
@@ -130,18 +110,5 @@ function lightning_scheduler_field_widget_info_alter(array &$info) {
   // Make the moderation state basefield widget use our plugin class.
   if (!empty($info['moderation_state_default'])) {
     $info['moderation_state_default']['class'] = ModerationStateWidget::class;
-  }
-}
-
-/**
- * Implements hook_entity_presave().
- */
-function lightning_scheduler_entity_presave($entity) {
-  // This is a horrible hack to work around Content Moderation's opinions being
-  // a little too strong. See lightning_scheduler_update_8001().
-  if ($entity instanceof ContentEntityInterface && isset($entity->existingRevisionId)) {
-    $entity->setNewRevision(FALSE);
-    $entity->set($entity->getEntityType()->getKey('revision'), $entity->existingRevisionId);
-    unset($entity->existingRevisionId);
   }
 }
