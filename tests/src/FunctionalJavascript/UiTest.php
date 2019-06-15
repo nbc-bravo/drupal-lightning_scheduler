@@ -6,8 +6,6 @@ use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
 use Drupal\Tests\lightning_scheduler\Traits\SchedulerUiTrait;
 
 /**
- * @group lightning
- * @group lightning_workflow
  * @group lightning_scheduler
  */
 class UiTest extends WebDriverTestBase {
@@ -19,9 +17,8 @@ class UiTest extends WebDriverTestBase {
    */
   protected static $modules = [
     'block',
-    'lightning_page',
     'lightning_scheduler',
-    'lightning_workflow',
+    'node',
   ];
 
   /**
@@ -47,6 +44,12 @@ class UiTest extends WebDriverTestBase {
   public function testUi() {
     $assert_session = $this->assertSession();
     $page = $this->getSession()->getPage();
+
+    $this->createContentType(['type' => 'page']);
+
+    $workflow = $this->createEditorialWorkflow();
+    $workflow->getTypePlugin()->addEntityTypeAndBundle('node', 'page');
+    $workflow->save();
 
     $account = $this->createUser([
       'create page content',

@@ -4,6 +4,7 @@ namespace Drupal\Tests\lightning_scheduler\Traits;
 
 use Behat\Mink\Exception\ElementNotFoundException;
 use Drupal\Component\Serialization\Json;
+use Drupal\workflows\Entity\Workflow;
 
 /**
  * Contains methods for interacting with the scheduler UI.
@@ -114,6 +115,94 @@ trait SchedulerUiTrait {
    */
   protected function setRequestTime($request_time) {
     $this->container->get('state')->set('lightning_scheduler.request_time', $request_time);
+  }
+
+  /**
+   * Creates the editorial workflow.
+   *
+   * @return \Drupal\workflows\Entity\Workflow
+   *   The editorial workflow entity.
+   */
+  protected function createEditorialWorkflow() {
+    $workflow = Workflow::create([
+      'type' => 'content_moderation',
+      'id' => 'editorial',
+      'label' => 'Editorial',
+      'type_settings' => [
+        'states' => [
+          'archived' => [
+            'label' => 'Archived',
+            'weight' => 5,
+            'published' => FALSE,
+            'default_revision' => TRUE,
+          ],
+          'draft' => [
+            'label' => 'Draft',
+            'published' => FALSE,
+            'default_revision' => FALSE,
+            'weight' => -5,
+          ],
+          'published' => [
+            'label' => 'Published',
+            'published' => TRUE,
+            'default_revision' => TRUE,
+            'weight' => 0,
+          ],
+          'review' => [
+            'label' => 'In review',
+            'weight' => -1,
+            'published' => FALSE,
+            'default_revision' => FALSE,
+          ],
+        ],
+        'transitions' => [
+          'archive' => [
+            'label' => 'Archive',
+            'from' => ['published'],
+            'to' => 'archived',
+            'weight' => 2,
+          ],
+          'archived_published' => [
+            'label' => 'Restore from archive',
+            'from' => ['archived'],
+            'to' => 'published',
+            'weight' => 4,
+          ],
+          'create_new_draft' => [
+            'label' => 'Create New Draft',
+            'to' => 'draft',
+            'weight' => 0,
+            'from' => [
+              'archived',
+              'draft',
+              'published',
+              'review',
+            ],
+          ],
+          'publish' => [
+            'label' => 'Publish',
+            'to' => 'published',
+            'weight' => 1,
+            'from' => [
+              'draft',
+              'published',
+              'review',
+            ],
+          ],
+          'review' => [
+            'label' => 'Send to review',
+            'to' => 'review',
+            'weight' => 0,
+            'from' => [
+              'draft',
+              'review',
+            ],
+          ],
+        ],
+      ],
+    ]);
+    $workflow->save();
+    return $workflow;
   }
 
 }

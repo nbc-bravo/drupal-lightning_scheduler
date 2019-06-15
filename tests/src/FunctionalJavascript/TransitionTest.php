@@ -7,8 +7,6 @@ use Drupal\Tests\lightning_scheduler\Traits\SchedulerUiTrait;
 use Drupal\Tests\Traits\Core\CronRunTrait;
 
 /**
- * @group lightning
- * @group lightning_workflow
  * @group lightning_scheduler
  */
 class TransitionTest extends WebDriverTestBase {
@@ -21,9 +19,8 @@ class TransitionTest extends WebDriverTestBase {
    */
   protected static $modules = [
     'block',
-    'lightning_page',
     'lightning_scheduler',
-    'lightning_workflow',
+    'node',
   ];
 
   /**
@@ -32,6 +29,12 @@ class TransitionTest extends WebDriverTestBase {
   protected function setUp() {
     parent::setUp();
     $this->drupalPlaceBlock('local_tasks_block');
+
+    $this->createContentType(['type' => 'page']);
+
+    $workflow = $this->createEditorialWorkflow();
+    $workflow->getTypePlugin()->addEntityTypeAndBundle('node', 'page');
+    $workflow->save();
 
     $account = $this->createUser([
       'create page content',

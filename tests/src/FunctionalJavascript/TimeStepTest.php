@@ -3,20 +3,20 @@
 namespace Drupal\Tests\lightning_scheduler\FunctionalJavascript;
 
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
+use Drupal\Tests\lightning_scheduler\Traits\SchedulerUiTrait;
 
 /**
- * @group lightning_workflow
  * @group lightning_scheduler
  */
 class TimeStepTest extends WebDriverTestBase {
 
+  use SchedulerUiTrait;
   /**
    * {@inheritdoc}
    */
   protected static $modules = [
-    'lightning_page',
-    'lightning_workflow',
     'lightning_scheduler',
+    'node',
   ];
 
   /**
@@ -25,6 +25,12 @@ class TimeStepTest extends WebDriverTestBase {
   public function testTimeSteps() {
     $assert_session = $this->assertSession();
     $page = $this->getSession()->getPage();
+
+    $this->createContentType(['type' => 'page']);
+
+    $workflow = $this->createEditorialWorkflow();
+    $workflow->getTypePlugin()->addEntityTypeAndBundle('node', 'page');
+    $workflow->save();
 
     $steps = [
       '1 second' => [
@@ -59,7 +65,7 @@ class TimeStepTest extends WebDriverTestBase {
     $this->drupalLogin($this->createUser([], NULL, TRUE));
 
     foreach ($steps as $step) {
-      $this->drupalGet('/admin/config/system/lightning');
+      $this->drupalGet('/admin/config');
       $page->clickLink('Scheduler');
       $page->selectFieldOption('time_step', $step['time_step']);
       $page->pressButton('Save configuration');

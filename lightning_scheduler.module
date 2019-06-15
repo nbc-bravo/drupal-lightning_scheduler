@@ -112,3 +112,11 @@ function lightning_scheduler_field_widget_info_alter(array &$info) {
     $info['moderation_state_default']['class'] = ModerationStateWidget::class;
   }
 }
+
+/**
+ * Implements hook_local_tasks_alter().
+ */
+function lightning_scheduler_local_tasks_alter(array &$local_tasks) {
+  // This makes our test code simpler, and should be harmless.
+  $local_tasks['entity.node.edit_form']['options']['attributes']['rel'] = 'edit-form';
+}

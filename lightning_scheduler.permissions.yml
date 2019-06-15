@@ -1,2 +1,6 @@
 permission_callbacks:
   - \Drupal\lightning_scheduler\Permissions::transitionPermissions
+administer lightning scheduler:
+  title: 'Administer Lightning Scheduler'
+  description: 'Users with this permission will be able to administer Lightning Scheduler settings.'
+  restrict access: TRUE

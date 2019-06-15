@@ -7,10 +7,8 @@ use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\Tests\BrowserTestBase;
 use Drupal\Tests\lightning_scheduler\Traits\SchedulerUiTrait;
-use Drupal\workflows\Entity\Workflow;
 
 /**
- * @group lightning_workflow
  * @group lightning_scheduler
  *
  * @requires inline_entity_form
@@ -25,7 +23,7 @@ class InlineEntityFormTest extends BrowserTestBase {
   protected static $modules = [
     'inline_entity_form',
     'lightning_scheduler',
-    'lightning_workflow',
+    'node',
   ];
 
   /**
@@ -60,7 +58,7 @@ class InlineEntityFormTest extends BrowserTestBase {
       'label' => 'Inline entity',
     ])->save();
 
-    lightning_workflow_entity_get_form_display('user', 'user', 'default')
+    $this->entityGetFormDisplay('user', 'user')
       ->setComponent('field_inline_entity', [
         'type' => 'inline_entity_form_simple',
       ])
@@ -89,18 +87,15 @@ class InlineEntityFormTest extends BrowserTestBase {
       'label' => 'Inline entity',
     ])->save();
 
-    lightning_workflow_entity_get_form_display('node', 'alpha', 'default')
+    $this->entityGetFormDisplay('node', 'alpha')
       ->setComponent('field_inline_entity', [
         'type' => 'inline_entity_form_simple',
       ])
       ->save();
 
-    /** @var \Drupal\workflows\Entity\Workflow $workflow */
-    $workflow = Workflow::load('editorial');
-    /** @var \Drupal\content_moderation\Plugin\WorkflowType\ContentModerationInterface $plugin */
-    $plugin = $workflow->getTypePlugin();
-    $plugin->addEntityTypeAndBundle('node', 'alpha');
-    $plugin->addEntityTypeAndBundle('node', 'beta');
+    $workflow = $this->createEditorialWorkflow();
+    $workflow->getTypePlugin()->addEntityTypeAndBundle('node', 'alpha');
+    $workflow->getTypePlugin()->addEntityTypeAndBundle('node', 'beta');
     $workflow->save();
 
     // Inline Entity Form has a problem referencing entities with other than
@@ -177,48 +172,48 @@ class InlineEntityFormTest extends BrowserTestBase {
     $this->assertTransitionData($host_field, $transition_2);
   }
 
-}
+  /**
+   * Returns the entity form display associated with a bundle and form mode.
+   *
+   * This is an exact copy of the deprecated entity_get_form_display() from Core
+   * 8.6.x except for one change: the default value of the $form_mode parameter.
+   *
+   * @todo Eliminate this in favor of
+   *   \Drupal::service('entity_display.repository')->getFormDisplay() in Core
+   *   8.8.x once that is the lowest supported version.
+   *
+   * @param string $entity_type
+   *   The entity type.
+   * @param string $bundle
+   *   The bundle.
+   * @param string $form_mode
+   *   The form mode.
+   *
+   * @return \Drupal\Core\Entity\Display\EntityFormDisplayInterface
+   *   The entity form display associated with the given form mode.
+   *
+   * @see \Drupal\Core\Entity\EntityStorageInterface::create()
+   * @see \Drupal\Core\Entity\EntityStorageInterface::load()
+   */
+  private function entityGetFormDisplay($entity_type, $bundle, $form_mode = 'default') {
+    // Try loading the entity from configuration.
+    $entity_form_display = EntityFormDisplay::load($entity_type . '.' . $bundle . '.' . $form_mode);
 
-/**
- * Returns the entity form display associated with a bundle and form mode.
- *
- * This is an exact copy of the deprecated entity_get_form_display() from Core
- * 8.6.x except for one change: the default value of the $form_mode parameter.
- *
- * @todo Eliminate this in favor of
- *   \Drupal::service('entity_display.repository')->getFormDisplay() in Core
- *   8.8.x once that is the lowest supported version.
- *
- * @param string $entity_type
- *   The entity type.
- * @param string $bundle
- *   The bundle.
- * @param string $form_mode
- *   The form mode.
- *
- * @return \Drupal\Core\Entity\Display\EntityFormDisplayInterface
- *   The entity form display associated with the given form mode.
- *
- * @see \Drupal\Core\Entity\EntityStorageInterface::create()
- * @see \Drupal\Core\Entity\EntityStorageInterface::load()
- */
-function lightning_workflow_entity_get_form_display($entity_type, $bundle, $form_mode = 'default') {
-  // Try loading the entity from configuration.
-  $entity_form_display = EntityFormDisplay::load($entity_type . '.' . $bundle . '.' . $form_mode);
+    // If not found, create a fresh entity object. We do not preemptively create
+    // new entity form display configuration entries for each existing entity type
+    // and bundle whenever a new form mode becomes available. Instead,
+    // configuration entries are only created when an entity form display is
+    // explicitly configured and saved.
+    if (!$entity_form_display) {
+      $entity_form_display = EntityFormDisplay::create([
+        'targetEntityType' => $entity_type,
+        'bundle' => $bundle,
+        'mode' => $form_mode,
+        'status' => TRUE,
+      ]);
+    }
 
-  // If not found, create a fresh entity object. We do not preemptively create
-  // new entity form display configuration entries for each existing entity type
-  // and bundle whenever a new form mode becomes available. Instead,
-  // configuration entries are only created when an entity form display is
-  // explicitly configured and saved.
-  if (!$entity_form_display) {
-    $entity_form_display = EntityFormDisplay::create([
-      'targetEntityType' => $entity_type,
-      'bundle' => $bundle,
-      'mode' => $form_mode,
-      'status' => TRUE,
-    ]);
+    return $entity_form_display;
   }
 
-  return $entity_form_display;
 }

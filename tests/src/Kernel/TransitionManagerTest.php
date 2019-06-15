@@ -11,8 +11,6 @@ use Drupal\lightning_scheduler\TransitionManager;
 /**
  * @coversDefaultClass \Drupal\lightning_scheduler\TransitionManager
  *
- * @group lightning
- * @group lightning_workflow
  * @group lightning_scheduler
  */
 class TransitionManagerTest extends KernelTestBase {

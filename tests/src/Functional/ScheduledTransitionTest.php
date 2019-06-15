@@ -5,12 +5,9 @@ namespace Drupal\Tests\lightning_scheduler\Functional;
 use Drupal\Tests\BrowserTestBase;
 use Drupal\Tests\lightning_scheduler\Traits\SchedulerUiTrait;
 use Drupal\Tests\Traits\Core\CronRunTrait;
-use Drupal\workflows\Entity\Workflow;
 
 /**
- * @group lightning_workflow
  * @group lightning_scheduler
- * @group orca_public
  */
 class ScheduledTransitionTest extends BrowserTestBase {
 
@@ -31,11 +28,6 @@ class ScheduledTransitionTest extends BrowserTestBase {
   protected function setUp() {
     parent::setUp();
 
-    // The editorial workflow is packaged with Lightning Workflow, so install
-    // its config but don't actually enable it since it is not a dependency.
-    $this->container->get('config.installer')
-      ->installDefaultConfig('module', 'lightning_workflow');
-
     $this->drupalCreateContentType(['type' => 'page']);
 
     // Due to a known core bug, rebuilding the node access table will break the
@@ -46,10 +38,8 @@ class ScheduledTransitionTest extends BrowserTestBase {
     // @see https://www.drupal.org/project/drupal/issues/2823957
     node_access_rebuild();
 
-    $workflow = Workflow::load('editorial');
-    /** @var \Drupal\content_moderation\Plugin\WorkflowType\ContentModerationInterface $plugin */
-    $plugin = $workflow->getTypePlugin();
-    $plugin->addEntityTypeAndBundle('node', 'page');
+    $workflow = $this->createEditorialWorkflow();
+    $workflow->getTypePlugin()->addEntityTypeAndBundle('node', 'page');
     $workflow->save();
 
     $account = $this->drupalCreateUser([
