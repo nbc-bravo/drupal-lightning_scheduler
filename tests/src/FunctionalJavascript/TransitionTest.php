@@ -63,7 +63,7 @@ class TransitionTest extends WebDriverTestBase {
     $this->createTransition('Published', time() - 10);
     $this->getSession()->getPage()->pressButton('Save');
     $this->cronRun();
-    $assert_session->elementExists('css', 'a[rel="edit-form"]')->click();
+    $this->clickEditLink();
     $assert_session->pageTextContains('Current state Published');
     $assert_session->elementNotExists('css', '.scheduled-transition');
   }
@@ -78,7 +78,7 @@ class TransitionTest extends WebDriverTestBase {
     $this->createTransition('Archived', time() - 10);
     $this->getSession()->getPage()->pressButton('Save');
     $this->cronRun();
-    $assert_session->elementExists('css', 'a[rel="edit-form"]')->click();
+    $this->clickEditLink();
     // It will still be in the draft state because the transition should resolve
     // to Draft -> Archived, which doesn't exist.
     $assert_session->pageTextContains('Current state Draft');
@@ -92,16 +92,16 @@ class TransitionTest extends WebDriverTestBase {
 
     $page->selectFieldOption('moderation_state[0][state]', 'In review');
     $page->pressButton('Save');
-    $assert_session->elementExists('css', 'a[rel="edit-form"]')->click();
+    $this->clickEditLink();
     $this->createTransition('Published', $now + 8);
     $page->pressButton('Save');
     $this->setRequestTime($now + 10);
     $this->cronRun();
-    $assert_session->elementExists('css', 'a[rel="edit-form"]')->click();
+    $this->clickEditLink();
     $page->selectFieldOption('moderation_state[0][state]', 'Archived');
     $page->pressButton('Save');
     $this->cronRun();
-    $assert_session->elementExists('css', 'a[rel="edit-form"]')->click();
+    $this->clickEditLink();
     $assert_session->pageTextContains('Current state Archived');
   }
 
@@ -116,7 +116,7 @@ class TransitionTest extends WebDriverTestBase {
     $page->clickLink('Promotion options');
     $page->checkField('Promoted to front page');
     $page->pressButton('Save');
-    $assert_session->elementExists('css', 'a[rel="edit-form"]')->click();
+    $this->clickEditLink();
     $page->fillField('Title', 'MC Hammer');
     $page->selectFieldOption('moderation_state[0][state]', 'Draft');
     $this->createTransition('Published', $now + 8);

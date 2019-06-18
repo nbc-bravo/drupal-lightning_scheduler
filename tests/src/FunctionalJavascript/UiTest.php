@@ -68,7 +68,7 @@ class UiTest extends WebDriverTestBase {
     $this->createTransition('Archived', mktime(8, 57, 0, 9, 19, 2038));
 
     $page->pressButton('Save');
-    $assert_session->elementExists('css', 'a[rel="edit-form"]')->click();
+    $this->clickEditLink();
     $assert_session->pageTextContains("Change to Published on May 4, 2038 at 6:00 PM");
     $assert_session->pageTextContains("Change to Archived on September 19, 2038 at 8:57 AM");
 
@@ -77,7 +77,7 @@ class UiTest extends WebDriverTestBase {
     $assert_session->pageTextNotContains("Change to Archived on September 19, 2038 at 8:57 AM");
     $assert_session->linkExists('add another');
     $page->pressButton('Save');
-    $assert_session->elementExists('css', 'a[rel="edit-form"]')->click();
+    $this->clickEditLink();
     $assert_session->pageTextContains("Change to Published on May 4, 2038 at 6:00 PM");
     $assert_session->pageTextNotContains("Change to Archived on September 19, 2038 at 8:57 AM");
 
@@ -86,7 +86,7 @@ class UiTest extends WebDriverTestBase {
     $assert_session->pageTextContains("Change to Published on May 4, 2038 at 6:00 PM");
     $assert_session->pageTextNotContains("Change to Archived on September 19, 2038 at 8:57 AM");
     $page->pressButton('Save');
-    $assert_session->elementExists('css', 'a[rel="edit-form"]')->click();
+    $this->clickEditLink();
     $assert_session->pageTextContains("Change to Published on May 4, 2038 at 6:00 PM");
     $assert_session->pageTextNotContains("Change to Archived on September 19, 2038 at 8:57 AM");
     $page->clickLink('Remove transition to Published on May 4, 2038 at 6:00 PM');

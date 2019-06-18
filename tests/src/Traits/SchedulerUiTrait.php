@@ -14,7 +14,7 @@ trait SchedulerUiTrait {
   /**
    * Sets the time zone.
    *
-   * Functional tests normally run in the Syndey, Australia time zone in order
+   * Functional tests normally run in the Sydney, Australia time zone in order
    * to catch time zone-related edge cases and bugs. However, the scheduler UI
    * is extremely sensitive to time zones, so to reduce craziness it's best to
    * set it to the time zone configured in php.ini.
@@ -120,7 +120,7 @@ trait SchedulerUiTrait {
   /**
    * Creates the editorial workflow.
    *
-   * @return \Drupal\workflows\Entity\Workflow
+   * @return \Drupal\workflows\WorkflowInterface
    *   The editorial workflow entity.
    */
   protected function createEditorialWorkflow() {
@@ -203,6 +203,17 @@ trait SchedulerUiTrait {
     ]);
     $workflow->save();
     return $workflow;
+  }
+
+  /**
+   * Clicks the link to edit an entity.
+   *
+   * @see lightning_scheduler_local_tasks_alter()
+   */
+  protected function clickEditLink() {
+    $this->assertSession()
+      ->elementExists('named', ['link', 'edit-form'])
+      ->click();
   }
 
 }

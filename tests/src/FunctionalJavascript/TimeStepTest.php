@@ -11,6 +11,7 @@ use Drupal\Tests\lightning_scheduler\Traits\SchedulerUiTrait;
 class TimeStepTest extends WebDriverTestBase {
 
   use SchedulerUiTrait;
+
   /**
    * {@inheritdoc}
    */
