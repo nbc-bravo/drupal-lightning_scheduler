@@ -7,8 +7,13 @@ use Drupal\Core\Form\FormStateInterface;
 
 /**
  * The settings form for controlling Lightning Scheduler's behavior.
+ *
+ * @internal
+ *   This is an internal part of Lightning Scheduler and may be changed or
+ *   removed at any time without warning. It should not be used by external
+ *   code in any way.
  */
-class SettingsForm extends ConfigFormBase {
+final class SettingsForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}

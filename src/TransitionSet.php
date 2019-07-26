@@ -7,7 +7,13 @@ use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeFieldItemList;
 
-class TransitionSet {
+/**
+ * @internal
+ *   This is an internal part of Lightning Scheduler and may be changed or
+ *   removed at any time without warning. It should not be used by external
+ *   code in any way.
+ */
+final class TransitionSet {
 
   /**
    * A set of scheduled transition dates for an entity.

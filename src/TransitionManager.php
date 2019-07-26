@@ -14,7 +14,13 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 
-class TransitionManager {
+/**
+ * @internal
+ *   This is an internal part of Lightning Scheduler and may be changed or
+ *   removed at any time without warning. It should not be used by external
+ *   code in any way.
+ */
+final class TransitionManager {
 
   use StringTranslationTrait;
 
@@ -23,28 +29,28 @@ class TransitionManager {
    *
    * @var \Drupal\content_moderation\ModerationInformationInterface
    */
-  protected $moderationInformation;
+  private $moderationInformation;
 
   /**
    * The currently logged-in user.
    *
    * @var \Drupal\Core\Session\AccountInterface
    */
-  protected $currentUser;
+  private $currentUser;
 
   /**
    * The entity type manager service.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityTypeManager;
+  private $entityTypeManager;
 
   /**
    * The logger channel.
    *
    * @var \Drupal\Core\Logger\LoggerChannelInterface
    */
-  protected $logger;
+  private $logger;
 
   /**
    * TransitionManager constructor.
@@ -224,7 +230,7 @@ class TransitionManager {
    *   An iterable of the latest revisions of all transitionable entities of the
    *   given type.
    */
-  protected function getTransitionable($entity_type_id, DrupalDateTime $now) {
+  private function getTransitionable($entity_type_id, DrupalDateTime $now) {
     $storage = $this->entityTypeManager->getStorage($entity_type_id);
 
     $now = $now->format(DateTimeItemInterface::DATETIME_STORAGE_FORMAT);

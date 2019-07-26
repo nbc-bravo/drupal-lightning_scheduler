@@ -6,7 +6,13 @@ use Drupal\Component\Datetime\Time as BaseTime;
 use Drupal\Core\State\StateInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class Time extends BaseTime {
+/**
+ * @internal
+ *   This is an internal part of Lightning Scheduler and may be changed or
+ *   removed at any time without warning. It should not be used by external
+ *   code in any way.
+ */
+final class Time extends BaseTime {
 
   /**
    * The state service.

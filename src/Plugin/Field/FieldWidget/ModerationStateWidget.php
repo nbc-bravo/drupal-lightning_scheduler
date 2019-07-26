@@ -19,29 +19,34 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Scheduler extension of Content Moderation's widget.
+ *
+ * @internal
+ *   This is an internal part of Lightning Scheduler and may be changed or
+ *   removed at any time without warning. It should not be used by external
+ *   code in any way.
  */
-class ModerationStateWidget extends BaseModerationStateWidget {
+final class ModerationStateWidget extends BaseModerationStateWidget {
 
   /**
    * The transition manager.
    *
    * @var \Drupal\lightning_scheduler\TransitionManager
    */
-  protected $transitionManager;
+  private $transitionManager;
 
   /**
    * The current entity.
    *
    * @var \Drupal\Core\Entity\FieldableEntityInterface
    */
-  protected $entity;
+  private $entity;
 
   /**
    * The config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  private $configFactory;
 
   /**
    * Constructs a new ModerationStateWidget object.
