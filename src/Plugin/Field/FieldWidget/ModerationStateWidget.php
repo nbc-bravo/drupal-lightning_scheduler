@@ -117,11 +117,14 @@ final class ModerationStateWidget extends BaseModerationStateWidget {
 
     // The latest revision, if there is one, is the canonical source of truth
     // regarding scheduled transitions.
-    $latest_revision = $this->moderationInformation
-      ->getLatestRevision(
-        $entity->getEntityTypeId(),
-        $entity->id()
-      ) ?: $entity;
+    /** @var \Drupal\Core\Entity\RevisionableStorageInterface $storage */
+    $storage = $this->entityTypeManager->getStorage($entity->getEntityTypeId());
+    if (!$entity->isNew() && $storage->getEntityType()->isRevisionable() && $latest_revision_id = $storage->getLatestRevisionId($entity->id())) {
+      $latest_revision = $storage->loadRevision($latest_revision_id) ?: $entity;
+    }
+    else {
+      $latest_revision = $entity;
+    }
 
     $transition_set = new TransitionSet(
       $latest_revision->get('scheduled_transition_date'),
