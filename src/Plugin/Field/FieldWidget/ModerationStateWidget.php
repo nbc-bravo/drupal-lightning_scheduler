@@ -32,21 +32,21 @@ final class ModerationStateWidget extends BaseModerationStateWidget {
    *
    * @var \Drupal\lightning_scheduler\TransitionManager
    */
-  private $transitionManager;
+  protected $transitionManager;
 
   /**
    * The current entity.
    *
    * @var \Drupal\Core\Entity\FieldableEntityInterface
    */
-  private $entity;
+  protected $entity;
 
   /**
    * The config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  private $configFactory;
+  protected $configFactory;
 
   /**
    * Constructs a new ModerationStateWidget object.
